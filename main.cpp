@@ -144,7 +144,6 @@ void keyCompareDown_(int nCode, WPARAM wParam, LPARAM lParam) {
 
 				if (pKeyStruct->vkCode == x) {
 					keys = keys + (char)pKeyStruct->vkCode;
-					Sleep(100);
 				}
 
 			}
